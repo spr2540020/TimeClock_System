@@ -1,0 +1,192 @@
+/* 勤怠管理システム 共通スタイル */
+*{box-sizing:border-box}
+body{margin:0;font-family:"Hiragino Sans","Noto Sans JP","Yu Gothic",Meiryo,sans-serif;background:#ededed;color:#222;font-size:14px}
+
+/* ヘッダー */
+.header{position:sticky;top:0;z-index:60;height:40px;background:#0000ff;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 48px 0 55px;font-size:16px}
+.header a{color:#fff;text-decoration:none}
+.header .right{display:flex;gap:18px}
+.header .right a:hover,.header .title:hover{text-decoration:underline}
+
+/* レイアウト */
+.layout{display:flex;min-height:calc(100vh - 40px)}
+.side{width:130px;flex:none;background:#dedede;position:sticky;top:40px;align-self:flex-start;height:calc(100vh - 40px);overflow-y:auto}
+.side a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:60px;padding:8px 12px;border-bottom:1px solid #b5b5b5;color:#000;text-decoration:none;font-size:15px;line-height:1.5}
+.side a{position:relative}
+.side .nbadge{position:absolute;top:6px;right:6px;padding:0 7px;font-size:11px}
+.side a:hover{background:#d0d0d0}
+.side a.active{background:#c4c4c4;font-weight:bold}
+.content{flex:1;min-width:0;padding:24px 32px 48px;background:#ededed}
+
+/* 見出し・カード */
+h1.page-title{font-size:20px;margin:0 0 16px;padding-bottom:8px;border-bottom:2px solid #0000ff}
+h2{font-size:16px;margin:0 0 12px}
+.card{background:#fff;border:1px solid #ccc;border-radius:4px;padding:20px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.muted{color:#666;font-size:13px}
+.hidden{display:none!important}
+
+/* ボタン */
+.btn{display:inline-block;padding:8px 20px;border:1px solid #888;background:#f7f7f7;color:#000;border-radius:4px;font-size:14px;cursor:pointer;text-decoration:none;font-family:inherit}
+.btn:hover{background:#eaeaea}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:#0000ff;border-color:#0000ff;color:#fff}
+.btn.primary:hover{background:#0000cc}
+.btn.danger{background:#d32f2f;border-color:#d32f2f;color:#fff}
+.btn.danger:hover{background:#b71c1c}
+.btn.sm{padding:4px 12px;font-size:13px}
+
+/* フォーム */
+.form-row{display:flex;align-items:flex-start;margin-bottom:12px}
+.form-row>label{width:140px;flex:none;padding-top:7px;font-weight:bold}
+.form-row .req::after{content:"必須";background:#d32f2f;color:#fff;font-size:11px;padding:1px 5px;border-radius:3px;margin-left:6px;font-weight:normal}
+input[type=text],input[type=email],input[type=tel],input[type=date],input[type=time],input[type=password],input[type=number],select,textarea{padding:7px 10px;border:1px solid #999;border-radius:4px;font-size:14px;font-family:inherit;background:#fff;min-width:240px;max-width:100%}
+textarea{width:100%;max-width:520px;min-height:90px}
+.field-err{border-color:#d32f2f!important;background:#fff4f4}
+.err-text{color:#d32f2f;font-size:13px;margin-top:4px}
+.actions{display:flex;gap:12px;margin-top:20px}
+
+/* テーブル */
+table.tbl{width:100%;border-collapse:collapse;background:#fff}
+table.tbl th,table.tbl td{border:1px solid #ccc;padding:8px 10px;text-align:left}
+table.tbl th{background:#e4e4f4;font-weight:bold;white-space:nowrap}
+table.tbl tr.sel td{background:#eef2ff}
+table.tbl td.c,table.tbl th.c{text-align:center}
+table.kv th{width:160px;background:#f0f0f0}
+
+/* メッセージ */
+.msg{padding:12px 16px;border-radius:4px;margin-bottom:16px;border:1px solid}
+.msg.ok{background:#e8f5e9;border-color:#66bb6a;color:#1b5e20}
+.msg.err{background:#ffebee;border-color:#ef5350;color:#b71c1c}
+.msg.info{background:#e3f2fd;border-color:#64b5f6;color:#0d47a1}
+.msg.warn{background:#fff8e1;border-color:#ffca28;color:#6d4c00}
+.empty{padding:28px;text-align:center;color:#666;background:#fff;border:1px dashed #aaa}
+
+/* バッジ */
+.badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:12px;color:#fff;background:#777}
+.badge.wait{background:#f57c00}.badge.ok{background:#388e3c}.badge.ng{background:#d32f2f}.badge.stop{background:#555}
+
+/* モーダル */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:#fff;border-radius:6px;padding:24px;width:min(440px,92vw)}
+.modal h3{margin:0 0 12px;font-size:17px}
+.modal .actions{justify-content:flex-end}
+
+/* 完了画面 */
+.done{text-align:center;padding:40px 20px}
+.done .mark{width:64px;height:64px;border-radius:50%;background:#388e3c;color:#fff;font-size:38px;line-height:64px;margin:0 auto 16px}
+.done h2{font-size:20px}
+
+/* カレンダー */
+table.cal{border-collapse:collapse;background:#fff;width:100%;max-width:520px;table-layout:fixed}
+table.cal caption{font-weight:bold;padding:8px;font-size:15px}
+table.cal th{background:#e4e4f4;padding:6px;border:1px solid #ccc;font-size:13px}
+table.cal th:first-child{color:#d32f2f}table.cal th:last-child{color:#1565c0}
+table.cal td{border:1px solid #ccc;height:58px;vertical-align:top;padding:3px 5px;font-size:13px;cursor:pointer}
+table.cal td.off{background:#f3f3f3;cursor:default}
+table.cal td:not(.off):hover{background:#eef2ff}
+table.cal td.sel{background:#cfd8ff;outline:2px solid #0000ff;outline-offset:-2px}
+table.cal td.today .d{background:#0000ff;color:#fff;border-radius:10px;padding:0 6px}
+table.cal .mk{display:block;font-size:11px;margin-top:3px;color:#1b5e20}
+table.cal .mk.wait{color:#e65100}table.cal .mk.ng{color:#b71c1c}
+
+/* カメラ */
+.camera{background:#222;color:#aaa;border-radius:6px;aspect-ratio:4/3;max-width:420px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;text-align:center}
+.camera video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.camera .face{position:absolute;width:46%;height:62%;border:3px dashed #fff;border-radius:50%;opacity:.7}
+.camera.scan .face{border-color:#4caf50;animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.2}}
+.clock{font-size:34px;font-weight:bold;letter-spacing:2px}
+.stamp-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:420px}
+.stamp-btns .btn{padding:16px;font-size:16px}
+.stamp-btns .btn.on{outline:3px solid #0000ff}
+.demo{border:1px dashed #999;padding:10px 12px;font-size:12px;color:#555;background:#fafafa;border-radius:4px;margin-top:12px;max-width:420px}
+.stat{font-size:28px;font-weight:bold;color:#0000ff}
+
+/* ログイン */
+.login-wrap{max-width:420px;margin:60px auto}
+
+/* 従業員トップ：大きい打刻ボタン＋本日の勤務状況 */
+.top-wrap{display:grid;grid-template-columns:1fr 250px;gap:20px;align-items:stretch}
+.big-btns{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.big-btns button{background:#fff;border:1px solid #333;border-radius:28px;min-height:150px;font-size:clamp(24px,3.2vw,42px);font-family:inherit;cursor:pointer;color:#000}
+.big-btns button:hover{background:#eef2ff;border-color:#0000ff}
+.status-panel{background:#fff;border:1px solid #333;border-radius:28px;padding:16px 18px;display:flex;flex-direction:column}
+.status-panel h2{margin:0 0 6px;font-size:15px}
+.status-panel .item{border-top:1px dashed #999;padding:10px 0 6px;flex:1}
+.status-panel .lbl{font-size:14px}
+.status-panel .val{text-align:center;font-size:20px;margin-top:10px}
+
+/* 現在の状況（常時表示） */
+.state{text-align:center;font-size:22px;font-weight:bold;border-radius:20px;padding:8px 0;margin-bottom:12px;color:#fff;background:#777}
+.state.s-work{background:#2e7d32}.state.s-break{background:#ef6c00}.state.s-out{background:#1565c0}.state.s-none{background:#777}
+
+/* カメラ認証・打刻完了：カメラ部分のみ中央表示（勤務状況はトップ画面だけ） */
+.top-wrap.solo{grid-template-columns:1fr;max-width:860px;margin:0 auto}
+.top-wrap.solo .camera{max-width:none;width:100%;aspect-ratio:16/9}
+.top-wrap.solo .status-panel{display:none}
+.top-wrap.solo .actions{justify-content:center}
+.header .who{text-decoration:underline;text-underline-offset:3px}
+
+/* ドラムロール式 日付入力 */
+.drum-wrap{position:relative;display:flex;gap:6px;width:300px;height:180px;background:#fff;border:1px solid #999;border-radius:8px;overflow:hidden}
+.drum-wrap::before,.drum-wrap::after{content:"";position:absolute;left:0;right:0;height:72px;pointer-events:none;z-index:2}
+.drum-wrap::before{top:0;background:linear-gradient(#fff 10%,rgba(255,255,255,.55))}
+.drum-wrap::after{bottom:0;background:linear-gradient(rgba(255,255,255,.55),#fff 90%)}
+.drum-band{position:absolute;left:6px;right:6px;top:72px;height:36px;border-top:2px solid #0000ff;border-bottom:2px solid #0000ff;background:rgba(0,0,255,.05);pointer-events:none;z-index:1}
+.drum{flex:1;overflow-y:scroll;scroll-snap-type:y mandatory;padding:72px 0;scrollbar-width:none;position:relative;z-index:0}
+.drum::-webkit-scrollbar{display:none}
+.drum div{height:36px;line-height:36px;text-align:center;scroll-snap-align:center;color:#888;font-size:16px;cursor:pointer;user-select:none}
+.drum div.on{color:#000;font-weight:bold;font-size:18px}
+.drum-wrap.init .drum{scroll-snap-type:none}
+
+/* ---------- 従業員のスマホ画面（管理者はPCのみ対応） ---------- */
+.footer-nav{display:none}
+.tbl-wrap{overflow-x:auto}
+.loc{border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:14px;border:1px solid}
+.loc.ok{background:#e8f5e9;border-color:#66bb6a;color:#1b5e20}
+.loc.ng{background:#ffebee;border-color:#ef5350;color:#b71c1c}
+.big-btns button:disabled{opacity:.4;cursor:not-allowed;background:#f0f0f0}
+.big-btns button:disabled:hover{background:#f0f0f0;border-color:#333}
+/* 従業員画面はスマホ専用。PCで開いても幅480pxのスマホ表示にする */
+html:has(body.role-emp){background:#cfcfcf}
+body.role-emp{max-width:480px;margin:0 auto;min-height:100vh;background:#ececec;box-shadow:0 0 0 1px #aaa}
+  body.role-emp{padding-bottom:76px}
+  body.role-emp .header{padding:0 12px;font-size:13px}
+  body.role-emp .header .right{gap:10px}
+  body.role-emp .side{display:none}
+  body.role-emp .content{padding:16px 12px}
+  body.role-emp .footer-nav{display:flex;position:fixed;left:50%;transform:translateX(-50%);width:min(480px,100%);bottom:0;height:64px;background:#fff;border-top:1px solid #999;z-index:50}
+  .footer-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:#333;text-decoration:none;font-size:12px}
+  .footer-nav a.active{color:#0000ff;font-weight:bold}
+  .footer-nav a:active{background:#eef2ff}
+  body.role-emp .form-row{flex-direction:column}
+  body.role-emp .form-row>label{width:auto!important;padding-top:0;margin-bottom:4px}
+  body.role-emp table.tbl{font-size:12px}
+  body.role-emp table.tbl th,body.role-emp table.tbl td{padding:6px 5px}
+  .top-wrap{grid-template-columns:1fr}
+  .top-wrap .status-panel{border-radius:18px;display:grid;grid-template-columns:repeat(3,1fr);column-gap:8px;padding:12px 14px}
+  .status-panel .state,.status-panel h2{grid-column:1/-1}
+  .status-panel .state{font-size:18px;padding:6px 0;margin-bottom:8px}
+  .status-panel h2{font-size:13px}
+  .status-panel .item{padding:6px 0 2px}
+  .status-panel .lbl{font-size:12px}
+  .status-panel .val{font-size:18px;margin-top:4px}
+  .big-btns{gap:12px}
+  .big-btns button{min-height:96px;border-radius:20px;font-size:22px}
+  .top-wrap.solo{max-width:none}
+
+.top-wrap.solo #locDemo{display:none}
+
+/* 勤務状態の文字色（管理者トップ） */
+.st{font-weight:bold}
+.st-work{color:#2e7d32}
+.st-break{color:#ef6c00}
+
+/* 顔認証登録 */
+.face-reg{max-width:520px}
+.face-box{position:relative;width:320px;max-width:100%;aspect-ratio:4/3;background:#222;border-radius:6px;overflow:hidden;margin-bottom:8px}
+.face-box video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.face-guide{position:absolute;left:50%;top:50%;width:46%;height:70%;transform:translate(-50%,-50%);border:3px dashed #fff;border-radius:50%;opacity:.8}
+.face-img{display:block;width:160px;height:120px;object-fit:cover;border:1px solid #999;border-radius:4px;margin-bottom:6px}

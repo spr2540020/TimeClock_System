@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>カメラ打刻 - 打刻システム</title><link rel="stylesheet" href="/static/style.css"><script src="/static/common.js"></script>
+<style>
+  /* 従業員がスマホを持っていないときに使う、PCカメラ認証打刻専用の画面（ログイン不要・単体ページ） */
+  .kiosk{max-width:900px;margin:0 auto;padding:28px 20px}
+  .kiosk .date{text-align:center;font-size:clamp(26px,4vw,40px);font-weight:bold}
+  .kiosk .time{text-align:center;font-size:clamp(44px,8vw,84px);font-weight:bold;letter-spacing:4px;margin:4px 0 24px;font-variant-numeric:tabular-nums}
+  .kiosk .big-btns button{min-height:200px;font-size:clamp(28px,4vw,48px)}
+  .kiosk .camera{max-width:none;width:100%;aspect-ratio:16/9}
+  .kiosk .result{text-align:center;font-size:clamp(22px,3vw,34px);padding:60px 20px;background:#fff;border:1px solid #333;border-radius:28px}
+  .kiosk .result.ng{color:#b71c1c}
+</style></head>
+<body>
+<div class="kiosk">
+  <div class="date" id="date"></div>
+  <div class="time" id="time"></div>
+
+  <!-- 打刻ボタン -->
+  <div id="stampView" class="big-btns">
+    <button data-type="出勤">出勤</button>
+    <button data-type="退勤">退勤</button>
+    <button data-type="休憩開始">休憩開始</button>
+    <button data-type="休憩終了">休憩終了</button>
+  </div>
+
+  <!-- ボタン押下後：カメラ認証 -->
+  <div id="camView" class="hidden">
+    <div id="msg"></div>
+    <div class="camera" id="cam">
+      <video id="video" autoplay playsinline muted class="hidden"></video>
+      <span id="camText">カメラを起動しています…</span>
+      <div class="face hidden" id="face"></div>
+    </div>
+    <div class="actions" style="justify-content:center"><button class="btn" id="cancel">キャンセル</button></div>
+  </div>
+
+  <!-- 打刻結果（数秒で自動的にボタン画面へ戻る） -->
+  <div id="done" class="result hidden"></div>
+</div>
+
+<script>
+/* 日付と現在時刻（秒まで）を1秒ごとに更新 */
+function tick() {
+  const n = new Date();
+  $('#date').textContent = `${n.getFullYear()}年${n.getMonth() + 1}月${n.getDate()}日（${'日月火水木金土'[n.getDay()]}）`;
+  $('#time').textContent = `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+}
+tick(); setInterval(tick, 1000);
+
+let type = null, stream = null, timer = null;
+const cam = $('#cam'), video = $('#video');
+const show = id => ['stampView', 'camView', 'done'].forEach(v => $('#' + v).classList.toggle('hidden', v !== id));
+
+/* 打刻をこのブラウザに保存（従業員のスマホ画面・管理者トップの表示に反映するデモ用。実システムではH2に保存） */
+function save(kind, hm) {
+  const key = new Date().toISOString().slice(0, 10);
+  let t = { date: key, in: '', out: '', brkMin: 0, brkStart: '' };
+  try { const o = JSON.parse(localStorage.getItem('kintai_today')); if (o && o.date === key) t = o; } catch (e) { }
+  if (kind === '出勤') t.in = hm; else if (kind === '退勤') t.out = hm; else if (kind === '休憩開始') t.brkStart = hm;
+  else if (kind === '休憩終了' && t.brkStart) { t.brkMin += Math.max(0, toMin(hm) - toMin(t.brkStart)); t.brkStart = ''; }
+  try { localStorage.setItem('kintai_today', JSON.stringify(t)); } catch (e) { }
+}
+function stopCam() { if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; video.classList.add('hidden'); $('#face').classList.add('hidden'); }
+function backToButtons() { clearTimeout(timer); cam.classList.remove('scan'); stopCam(); type = null; show('stampView'); }
+function result(ok, html) { const d = $('#done'); d.className = 'result' + (ok ? '' : ' ng'); d.innerHTML = html; show('done'); timer = setTimeout(backToButtons, 3500); }
+
+$$('[data-type]').forEach(b => b.onclick = async () => {
+  type = b.dataset.type; show('camView'); $('#msg').innerHTML = '';
+  $('#camText').classList.remove('hidden'); $('#camText').textContent = 'カメラを起動しています…';
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream; video.classList.remove('hidden');
+    $('#camText').classList.add('hidden'); $('#face').classList.remove('hidden');
+    $('#msg').innerHTML = `<div class="msg info">${type}：顔をカメラにかざしてください（自動で認証・打刻します）</div>`;
+    timer = setTimeout(authenticate, 2500);   // デモ：一定時間後に認証成功とみなす
+  } catch (e) {
+    stopCam(); result(false, 'カメラを利用できません。<br>管理者にお知らせください。');
+  }
+});
+$('#cancel').onclick = backToButtons;
+
+async function authenticate() {
+
+    cam.classList.add('scan');
+
+    $('#msg').innerHTML =
+        '<div class="msg info">顔を認証しています...</div>';
+
+    try {
+
+        const canvas =
+            document.createElement('canvas');
+
+        canvas.width =
+            video.videoWidth;
+
+        canvas.height =
+            video.videoHeight;
+
+        const ctx =
+            canvas.getContext('2d');
+
+        ctx.drawImage(
+            video,
+            0,
+            0
+        );
+
+        const imageData =
+            canvas.toDataURL(
+                'image/jpeg',
+                0.9
+            );
+
+        const response =
+            await fetch(
+                '/recognize',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body: JSON.stringify({
+                        image: imageData
+                    })
+                }
+            );
+
+        const data =
+            await response.json();
+
+        cam.classList.remove('scan');
+
+        stopCam();
+
+        if (data.success) {
+
+            const n =
+                new Date();
+
+            const hm =
+                `${pad(n.getHours())}:${pad(n.getMinutes())}`;
+            
+            const timestamp =
+                `${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())} `
+                + `${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;
+
+            save(type, hm);
+            await fetch(
+                '/stamp',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+        
+                    body: JSON.stringify({
+                        name: data.name,
+                        type: type,
+                        score: data.score,
+                        time: timestamp
+                    })
+                }
+            );
+
+            result(
+                true,
+                `
+                ${data.name}さん<br>
+                <b>${type}</b>
+                を打刻しました<br>
+                信頼度:
+                ${(data.score * 100).toFixed(1)}%
+                `
+            );
+
+        } else {
+
+            result(
+                false,
+                '顔を認識できませんでした'
+            );
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        stopCam();
+
+        result(
+            false,
+            '認証処理でエラーが発生しました'
+        );
+    }
+}
+</script>
+</body></html>
